@@ -1,0 +1,7 @@
+- hosts: "proxmox, debian"
+  become: true
+  tasks:
+    - name: upgrade
+      apt: 
+        update_cache: true
+        upgrade: 'yes'
