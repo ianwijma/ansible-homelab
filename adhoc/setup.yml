@@ -1,0 +1,52 @@
+- hosts: localhost
+  gather_facts: no
+  vars_prompt:
+  - name: current_ip
+    prompt: Please enter the servers current dynamic IP
+    default: "192.168.1.6"
+    private: no
+  tasks:
+    - add_host:
+        name: "{{ current_ip }}"
+        groups: dynamically_created_hosts
+
+- hosts: dynamically_created_hosts
+  vars_prompt:
+  - name: new_ip
+    prompt: Please enter the servers new static IP 
+    default: "192.168.1.100"
+    private: no
+  - name: service_name
+    prompt: Please enter the service name <service_name>.home.wijma.cloud
+    default: "ansible-test"
+    private: no
+  tasks:
+    - name: Dist upgrade
+      become: yes
+      apt:
+        upgrade: dist
+        update_cache: yes
+    - name: Install packages
+      become: yes
+      apt:
+        pkg: 
+        - qemu-guest-agent
+        - zsh
+        - atop
+    - name: Copy authorized_keys to server
+      ansible.builtin.copy:
+        src: authorized_keys
+        dest: ~/.ssh/authorized_keys
+    - name: Copy authorized_keys to root
+      become: yes
+      ansible.builtin.copy:
+        src: authorized_keys
+        dest: ~/.ssh/authorized_keys
+    - name: Update hostname
+      become: yes
+      ansible.builtin.command: hostnamectl hostname {{ service_name }}.home.wijma.cloud
+    - name: Set new static IP addresses
+      become: yes
+      ansible.builtin.template: 
+        src: 99_config.yaml
+        dest: /etc/netplan/99_config.yaml

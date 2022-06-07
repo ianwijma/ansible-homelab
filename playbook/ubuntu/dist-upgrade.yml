@@ -1,4 +1,4 @@
-- hosts: "proxmox, debian"
+- hosts: "proxmox,ubuntu"
   become: true
   tasks:
     - name: upgrade
