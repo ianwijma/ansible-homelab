@@ -4,4 +4,4 @@
 echo "Root permissions are required to install required packages...";
 sudo echo "Root permissions granted";
 
-sudo apt install -y ansible make;
+sudo apt install -y ansible make sshpass;
