@@ -3,7 +3,6 @@
   vars_prompt:
   - name: current_ip
     prompt: Please enter the servers current dynamic IP
-    default: "192.168.1.6"
     private: no
   tasks:
     - add_host:
@@ -14,11 +13,9 @@
   vars_prompt:
   - name: new_ip
     prompt: Please enter the servers new static IP 
-    default: "192.168.1.100"
     private: no
   - name: service_name
     prompt: Please enter the service name <service_name>.home.wijma.cloud
-    default: "ansible-test"
     private: no
   tasks:
     - name: Dist upgrade
@@ -31,7 +28,6 @@
       apt:
         pkg: 
         - qemu-guest-agent
-        - zsh
         - atop
     - name: Copy authorized_keys to server
       ansible.builtin.copy:
