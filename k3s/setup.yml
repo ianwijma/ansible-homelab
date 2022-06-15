@@ -1,14 +1,38 @@
-- hosts: k3s_first
+- hosts: k3s_first,k3s_other,k3s_workers
   tasks:
-    - name: Install k3s on the first node
-      ansible.builtin.command: curl -sfL https://get.k3s.io | K3S_TOKEN=someDankK3SToken sh -s - server --cluster-init
+    - name: Dist upgrade
+      apt:
+        upgrade: dist
+    - name: Install curl
+      apt:
+        pkg: 
+        - curl
+    - name: Copy kmsg file
+      ansible.builtin.copy:
+        src: kmsg
+        dest: /etc/init.d/kmsg
+    - name: chmod kmsg
+      ansible.builtin.shell: "chmod +x /etc/init.d/kmsg"
+    - name: Copy kmsg service
+      ansible.builtin.copy:
+        src: kmsg.service
+        dest: /etc/systemd/system/kmsg.service
+    - name: enable kmsg
+      ansible.builtin.shell: "systemctl enable kmsg.service"
+    - name: start kmsg
+      ansible.builtin.shell: "systemctl start kmsg.service"
 
-- hosts: k3s_other
-  tasks:
-    - name: Install k3s on the other nodes
-      ansible.builtin.command: K3S_TOKEN=someDankK3SToken k3s server --server https://192.168.1.150:6443
+# - hosts: k3s_first
+#   tasks:
+#     - name: Install k3s on the first node
+#       ansible.builtin.shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=someDankK3SToken sh -s - server --cluster-init"
 
-- hosts: k3s_workers
-  tasks:
-    - name: Install k3s on the workers nodes
-      ansible.builtin.command: curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.150:6443 K3S_TOKEN=someDankK3SToken sh -
+# - hosts: k3s_other
+#   tasks:
+#     - name: Install k3s on the other nodes
+#       ansible.builtin.shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=someDankK3SToken sh -s - server --server https://192.168.1.150:6443"
+
+# - hosts: k3s_workers
+#   tasks:
+#     - name: Install k3s on the workers nodes
+#       ansible.builtin.shell: "curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.150:6443 K3S_TOKEN=someDankK3SToken sh -"

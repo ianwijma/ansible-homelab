@@ -1,0 +1,11 @@
+[Unit]
+Description=prerequisite kubernetes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/etc/init.d/kmsg start
+ExecStop=/etc/init.d/kmsg stop
+
+[Install]
+WantedBy=default.target
