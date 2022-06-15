@@ -1,0 +1,14 @@
+- hosts: k3s_first
+  tasks:
+    - name: Install k3s on the first node
+      ansible.builtin.command: curl -sfL https://get.k3s.io | K3S_TOKEN=someDankK3SToken sh -s - server --cluster-init
+
+- hosts: k3s_other
+  tasks:
+    - name: Install k3s on the other nodes
+      ansible.builtin.command: K3S_TOKEN=someDankK3SToken k3s server --server https://192.168.1.150:6443
+
+- hosts: k3s_workers
+  tasks:
+    - name: Install k3s on the workers nodes
+      ansible.builtin.command: curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.150:6443 K3S_TOKEN=someDankK3SToken sh -

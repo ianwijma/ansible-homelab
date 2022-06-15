@@ -1,0 +1,7 @@
+- hosts: k3s_first,k3s_other,k3s_workers
+  tasks:
+    - name: Copy authorized_keys to root user
+      become: yes
+      ansible.builtin.copy:
+        src: authorized_keys
+        dest: ~/.ssh/authorized_keys
