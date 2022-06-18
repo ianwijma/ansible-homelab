@@ -1,0 +1,31 @@
+- hosts: localhost
+  gather_facts: no
+  vars_prompt:
+  - name: target_ip
+    prompt: Please enter the target servers IP
+    private: no
+  tasks:
+    - add_host:
+        name: "{{ target_ip }}"
+        groups: dynamically_created_hosts
+
+- hosts: dynamically_created_hosts
+  vars_prompt:
+  - name: static_ip
+    prompt: Please enter the servers new static IP 
+    private: no
+  tasks:
+    - name: Copy authorized_keys to server user
+      ansible.builtin.copy:
+        src: authorized_keys
+        dest: ~/.ssh/authorized_keys
+    - name: Copy authorized_keys to root user
+      become: yes
+      ansible.builtin.copy:
+        src: authorized_keys
+        dest: ~/.ssh/authorized_keys
+    - name: Set new static IP addresses
+      become: yes
+      ansible.builtin.template: 
+        src: 99_config.yaml
+        dest: /etc/netplan/99_config.yaml

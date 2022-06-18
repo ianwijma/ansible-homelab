@@ -1,0 +1,15 @@
+- hosts: ubuntu_servers
+  tasks:
+    - name: Upgrade
+      apt:
+        upgrade: safe
+        update_cache: yes
+    - name: Install packages
+      apt:
+        pkg: 
+        - qemu-guest-agent
+        - atop
+    - name: Copy authorized_keys to server user
+      ansible.builtin.copy:
+        src: authorized_keys
+        dest: ~/.ssh/authorized_keys

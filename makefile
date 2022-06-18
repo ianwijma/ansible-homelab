@@ -10,8 +10,11 @@ TARGET_ALL = 'proxmox,k3s'
 ping:
 	ansible -i ${INV} ${TARGET_ALL} -m ping --user root
 
-setupServer:
-	ansible-playbook ./adhoc/setup.yml --user server --ask-pass --ask-become
+ubuntuSetup:
+	ansible-playbook ./setups/ubuntu-server.yml --user server --ask-pass --ask-become
+
+ubuntuState:
+	ansible-playbook -i ${INV} ./ubuntu-servers/state.yml --user root
 
 update:
 	ansible-playbook ${DIR_DEB}safe-upgrade.yml --user root -i ${INV}
@@ -24,3 +27,6 @@ k3sSsh:
 
 k3sSetup:
 	ansible-playbook ./k3s/setup.yml --user root -i ${INV}
+
+k3sInstallRancher:
+	ansible-playbook ./k3s/install-rancher.yml ${INV}
